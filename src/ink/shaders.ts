@@ -135,11 +135,12 @@ uniform sampler2D uMask;
 uniform float target;
 uniform float alpha;
 uniform float outsideKeep;
+uniform float insideKeep;
 out vec4 o;
 void main () {
   float m = texture(uMask, vUv).r;
   float d = texture(uDye, vUv).r;
-  d *= mix(outsideKeep, 1.0, m);
+  d *= mix(outsideKeep, insideKeep, m);
   d = max(d, m * target * alpha);
   o = vec4(d, 0.0, 0.0, 1.0);
 }`

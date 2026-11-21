@@ -8,8 +8,10 @@ import * as S from './shaders'
  *   DROP  an ink blob lands in the middle and churns
  *   PULL  the blob draws in on itself (anticipation)
  *   BURST the blob bursts and ink is flung across nearly the whole screen
- *   GATHER the ink is drawn back in and condenses into the name
- *   FORM  letters start to sharpen out of the cloud
+ *   GATHER the ink is drawn back in; the old cloud clears everywhere
+ *         (also where the letters will be, so the name is never stencilled
+ *         into the cloud before the ink arrives)
+ *   FORM  most of the gathered ink has landed; letters start to sharpen
  *   SET   the ink settles into crisp letters and holds
  *   FREE  the letters are released and dissolve like ink in water;
  *         only from here on does the pointer stir the water.
@@ -32,9 +34,9 @@ const T = {
   PULL: 1.45,
   BURST: 1.85,
   GATHER: 2.65,
-  FORM: 3.2,
-  SET: 3.85,
-  FREE: 5.4,
+  FORM: 3.75,
+  SET: 4.3,
+  FREE: 5.85,
 }
 
 const CONFIG = {
@@ -554,7 +556,10 @@ export class InkFluid {
       // the cloud clears while the letters condense out of it, hold, then are let go
       const ramp = smoothstep(T.FORM, T.SET + 0.3, t) * (1 - smoothstep(T.FREE, T.FREE + 0.6, t))
       const clean = t < T.FREE ? smoothstep(T.GATHER - 0.1, T.GATHER + 0.35, t) : 0
-      this.imprint(ramp, Math.pow(0.004, dt * clean))
+      // inside the letters the old cloud is cleared too, until the gathered ink lands,
+      // so the name only shows once the powder has converged onto it
+      const cleanIn = clean * (1 - smoothstep(T.GATHER + 0.75, T.FORM, t))
+      this.imprint(ramp, Math.pow(0.004, dt * clean), Math.pow(0.004, dt * cleanIn))
     }
     if (t > T.FREE && !this.releasedNotified) {
       this.releasedNotified = true
@@ -716,7 +721,7 @@ export class InkFluid {
     v.swap()
   }
 
-  private imprint(alpha: number, outsideKeep: number) {
+  private imprint(alpha: number, outsideKeep: number, insideKeep = 1) {
     const gl = this.gl
     const p = this.programs.imprint
     gl.useProgram(p.program)
@@ -728,6 +733,7 @@ export class InkFluid {
     gl.uniform1f(p.u.target, CONFIG.textDensity)
     gl.uniform1f(p.u.alpha, alpha)
     gl.uniform1f(p.u.outsideKeep, outsideKeep)
+    gl.uniform1f(p.u.insideKeep, insideKeep)
     this.blit(this.dye.write)
     this.dye.swap()
   }
