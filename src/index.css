@@ -1,0 +1,89 @@
+:root {
+  --paper: #fbfaf7;
+  --ink: #111114;
+  --muted: #6b6b73;
+  --line: #e4e1da;
+  --code-bg: #f3f1ec;
+  --danger: #b3261e;
+  --serif: 'Playfair Display', Georgia, 'Noto Serif TC', serif;
+  --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --page-width: 860px;
+  --read-width: 720px;
+  --gutter: clamp(16px, 5vw, 32px);
+  font-family: system-ui, -apple-system, 'Segoe UI', 'Noto Sans TC', sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+}
+
+a { color: var(--ink); }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* thin-outline capsule, same look as the homepage button */
+.pill-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font: inherit;
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  padding: 0.45rem 1.2rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.pill-button:hover,
+.pill-button:focus-visible {
+  background: var(--ink);
+  color: var(--paper);
+}
+.pill-button:disabled { opacity: 0.45; cursor: default; background: transparent; color: var(--ink); }
+.pill-button--solid { background: var(--ink); color: var(--paper); }
+.pill-button--solid:hover { background: #2a2a30; }
+.pill-button--danger { color: var(--danger); }
+.pill-button--danger:hover { background: var(--danger); color: #fff; }
+
+.tag-chip {
+  display: inline-block;
+  font: inherit;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.2rem 0.75rem;
+  text-decoration: none;
+}
+button.tag-chip, a.tag-chip { cursor: pointer; transition: border-color 0.2s, color 0.2s, background 0.2s; }
+button.tag-chip:hover, a.tag-chip:hover { color: var(--ink); border-color: var(--ink); }
+.tag-chip.is-active { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+
+.status { color: var(--muted); }
+.status--error { color: var(--danger); }
+.status code { font-family: var(--mono); font-size: 0.9em; margin: 0 0.2em; }
